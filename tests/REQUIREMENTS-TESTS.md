@@ -195,6 +195,8 @@ Okno importu i eksportu: `transfer.test.cjs` sprawdza ikonę po prawej stronie, 
 
 ## Drzewko projektu i wirtualne kolekcje
 
+
+
 Zmiana szerokości panelu: `project-tree-resize.test.cjs` sprawdza rzeczywiste przeciąganie prawej krawędzi, rozsuwanie biblioteki, ograniczenia szerokości, zapamiętanie po reload, sterowanie klawiaturą i anulowanie przeciągania przez Escape. Sprawdza też działanie na małym ekranie oraz w widoku rzutu bez zmiany geometrii i położenia obszaru rysowania. Testy jednostkowe obejmują limity, zaokrąglanie i błędne wartości. Zestaw jest zarejestrowany w inventory i wykrywany przez główny runner.
 
 Miniatury jako ikony prac: `image-icons.test.cjs` sprawdza jednostkowo centralne kadrowanie pionowych, poziomych, kwadratowych i skrajnie wydłużonych grafik oraz odrzucenie błędnych wymiarów. E2E przez rzeczywisty import obrazów sprawdza polecenia rysowania (100 × 300 → kadr 100 × 100 od Y=100; analogicznie dla 300 × 100), bitmapę 48 × 48 i ikonę DOM 18 × 18. Licznik operacji potwierdza generowanie przy wczytaniu także zwiniętej gałęzi, brak ponownego generowania przy przewijaniu i przebudowie drzewka, aktualizację po obrocie i edycji zdjęcia, ponowne użycie wersji przy cofaniu/ponawianiu oraz poprawne odtworzenie po reload. `collections.test.cjs` został zaktualizowany: przy pracach wymaga prawdziwych miniatur zamiast ikon dokumentu, zachowując sprawdzanie wcięć i przeciągania. Oba pliki są aktywne w runnerze i inventory.
@@ -208,3 +210,7 @@ Wygląd eksploratora z przykładu: `collections.test.cjs` sprawdza ikony folder�
 Cofanie utworzenia folderu po akceptacji obrazu również przenosi prace do „Bez folderu”; ponowienie odtwarza przypisania (`collections.test.cjs`).
 
 Na małym ekranie drzewko startuje zamknięte i zamyka się po zmniejszeniu okna; przycisk nagłówka pozwala je otworzyć i zamknąć. `collections.test.cjs` sprawdza dostępność kontrolek obrazu, a `photo-editor.cjs` zachowuje pełną regresję edycji zdjęcia na telefonie.
+
+## Licencja repozytorium
+
+Licencja repozytorium: `repository-layout.test.cjs` sprawdza obecność zastrzeżenia praw właściciela, wymogu uprzedniej pisemnej zgody na użycie i modyfikacje, ograniczeń kopiowania i dystrybucji, zakresu komercyjnego i niekomercyjnego, zachowanie licencji podmiotów trzecich i warunków GitHub oraz odnośnik z README. Licencja fontu Manrope pozostaje zachowana.

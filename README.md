@@ -8,6 +8,14 @@ ten katalog jako statyczną stronę, np. przez GitHub Pages.
 Projekt i obrazy są zapisywane lokalnie w przeglądarce. Identyfikator bazy
 danych pozostaje zachowany dla zgodności z dotychczasowymi zapisami.
 
+## License
+
+Copyright (c) 2026 sheytoonch. All rights reserved. Use, modification,
+copying, and redistribution of the original code require the owner's prior
+written permission, subject to applicable law, GitHub's terms, and existing
+third-party licenses. See [LICENSE](LICENSE) for the full terms and permission
+contact. This project is proprietary and is not offered under an open-source license.
+
 ## Testy
 
 Zależności Node.js dotyczą wyłącznie narzędzi testowych w `tests`.
