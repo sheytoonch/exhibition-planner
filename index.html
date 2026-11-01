@@ -1,1 +1,265 @@
-<!doctype html><html lang="pl"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="theme-color" content="#f5f3ee"/><meta name="description" content="Lokalny planer wystaw. Zaprojektuj przestrzeń, rozmieść obrazy i obejrzyj wystawę w 3D."/><title>Wystawa — planer przestrzeni</title></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!doctype html>
+<html lang="pl" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wystawa</title>
+    <meta name="color-scheme" content="dark light">
+    <script>try { document.documentElement.dataset.theme = localStorage.getItem('exhibition-theme') === 'light' ? 'light' : 'dark'; } catch (_) {}</script>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <h1>Wystawa</h1>
+      <button id="project-tree-toggle" class="icon-button" type="button" aria-label="Drzewko projektu" title="Drzewko projektu" aria-controls="project-tree" aria-expanded="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 3v15h5M4 8h5"/><rect x="9" y="4" width="11" height="7" rx="1"/><rect x="9" y="14" width="11" height="7" rx="1"/></svg></button>
+      <nav class="view-navigation" aria-label="Widok aplikacji">
+        <button id="library-view-button" type="button" aria-current="page">Obrazy</button>
+        <button id="plan-view-button" type="button" disabled>Projekt</button>
+      </nav>
+      <button id="workspace-focus" class="icon-button" type="button" aria-label="Skupienie na obszarze pracy" aria-pressed="false" title="Ukryj narzędzia">⛶</button>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Przełącz na jasny motyw" title="Przełącz na jasny motyw"></button>
+      <button id="transfer-open" class="icon-button" type="button" aria-label="Import / eksport" title="Import / eksport" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v12m-4-4 4 4 4-4M17 21V9m-4 4 4-4 4 4"/></svg></button>
+    </header>
+    <aside id="project-tree" aria-label="Drzewko projektu">
+      <div class="project-tree-heading"><strong>Projekt</strong><button id="project-tree-close" type="button" aria-label="Zamknij drzewko">×</button></div>
+      <details><summary>Rzuty</summary><div id="project-tree-plans"></div></details>
+      <details open><summary>Obrazy</summary>
+        <div id="project-collection-list"></div>
+        <button id="collection-add" type="button">+ Nowa kolekcja</button>
+        <form id="collection-form" hidden><label>Nazwa kolekcji<input id="collection-name" maxlength="100" required autocomplete="off"></label><button type="submit">Zapisz</button><button id="collection-cancel" type="button">Anuluj</button><p id="collection-error" role="status"></p></form>
+        <div id="collection-actions" hidden><button id="collection-rename" type="button">Zmień nazwę</button><button id="collection-delete" type="button">Usuń folder</button></div>
+      </details>
+      <p class="project-tree-hint">Przeciągnij podgląd obrazu do kolekcji.</p>
+      <p id="collection-status" role="status" aria-live="polite"></p>
+    </aside>
+    <div id="project-tree-resize" role="separator" aria-label="Szerokość drzewka projektu" aria-orientation="vertical" aria-controls="project-tree" tabindex="0" title="Przeciągnij, aby zmienić szerokość"></div>
+    <dialog id="transfer-dialog" aria-labelledby="transfer-title">
+      <div class="transfer-heading"><h2 id="transfer-title">Import / eksport</h2><form method="dialog"><button class="transfer-close" aria-label="Zamknij" value="close">×</button></form></div>
+      <div class="transfer-tabs" role="tablist" aria-label="Dane do przeniesienia"><button id="transfer-tab-plans" role="tab" aria-selected="true" aria-controls="transfer-plans" type="button">Rzuty</button><button id="transfer-tab-images" role="tab" aria-selected="false" aria-controls="transfer-images" tabindex="-1" type="button">Obrazy</button></div>
+      <div id="transfer-scroll">
+        <p id="transfer-help"></p>
+        <section id="transfer-plans" role="tabpanel" aria-labelledby="transfer-tab-plans"><div id="transfer-plan-list" class="transfer-grid"></div></section>
+        <section id="transfer-images" role="tabpanel" aria-labelledby="transfer-tab-images" hidden><div id="transfer-image-list" class="transfer-grid"></div></section>
+      </div>
+      <footer class="transfer-footer">
+      <label class="transfer-whole"><input id="transfer-whole" type="checkbox"> Cały projekt — rzuty i obrazy</label>
+      <div class="transfer-actions"><span id="transfer-selection" role="status"></span><button id="transfer-import" type="button">Importuj z pliku…</button><button id="transfer-export" type="button">Eksportuj zaznaczone</button></div>
+      <input id="transfer-file" type="file" accept=".json,application/json" hidden>
+      <section id="transfer-preview" hidden><h3>Zawartość pliku</h3><p id="transfer-summary"></p><p id="transfer-warning"></p><button id="transfer-apply" type="button">Dodaj</button><button id="transfer-cancel" type="button">Anuluj import</button></section>
+      <p id="transfer-status" role="status" aria-live="polite"></p>
+      </footer>
+    </dialog>
+    <main id="workspace" aria-label="Obszar pracy planera wystaw">
+      <section id="library-view" aria-label="Biblioteka obrazów">
+        <div class="image-toolbar">
+          <button id="add-images" type="button">Dodaj obrazy</button>
+          <div class="history-controls" role="group" aria-label="Historia zmian">
+            <button id="undo" class="icon-button" aria-label="Cofnij" type="button" title="Cofnij (Ctrl+Z)" disabled><span aria-hidden="true">↶</span></button>
+            <button id="redo" class="icon-button" aria-label="Ponów" type="button" title="Ponów (Ctrl+Y)" disabled><span aria-hidden="true">↷</span></button>
+          </div>
+          <input id="image-files" type="file" accept="image/*" multiple hidden>
+        <div class="image-tabs" role="tablist" aria-label="Akceptacja obrazów">
+          <button id="pending-tab" type="button" role="tab" aria-selected="true" aria-controls="images">Do akceptacji (0)</button>
+          <button id="accepted-tab" type="button" role="tab" aria-selected="false" aria-controls="images" tabindex="-1">Zaakceptowane (0)</button>
+        </div>
+        <label id="thumbnail-controls" class="thumbnail-controls" hidden>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6M7 10h6M10 7v6"/></svg>
+          <input id="thumbnail-size" type="range" min="120" max="320" step="10" value="180" aria-label="Rozmiar miniatur">
+          <output id="thumbnail-size-value" for="thumbnail-size">180 px</output>
+        </label>
+        </div>
+        <p id="acceptance-status" role="status"></p>
+        <p id="empty-message">Przeciągnij obrazy, wklej ze schowka (Ctrl+V) albo użyj przycisku „Dodaj obrazy”.</p>
+        <p id="import-status" role="status" aria-live="polite"></p>
+        <p id="storage-status" role="status" aria-live="polite"></p>
+        <ul id="images" class="images" role="tabpanel" aria-labelledby="pending-tab"></ul>
+      </section>
+      <section id="plan-view" aria-label="Rzut architektoniczny" hidden>
+        <div class="plan-actions">
+          <button id="plan-undo" class="icon-button" type="button" title="Cofnij (Ctrl+Z)" aria-label="Cofnij zmianę rzutu" disabled>↶</button><button id="plan-redo" class="icon-button" type="button" title="Ponów (Ctrl+Y)" aria-label="Ponów zmianę rzutu" disabled>↷</button>
+          <button id="plan-import" class="cad-tool" type="button"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="20" rx="2"/><circle cx="11" cy="12" r="2"/><path d="m5 24 8-8 5 5 4-4 6 7M24 2v8m-4-4h8"/></svg><span>Dodaj grafiki</span></button>
+          <button id="plan-empty" class="cad-tool" type="button"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19 4H6v24h20V11zM19 4v7h7M10 19h12m-6-6v12"/></svg><span>Nowy rzut</span></button>
+          <div class="cad-tools" role="group" aria-label="Narzędzia rysowania">
+            <button id="plan-select" class="cad-tool" type="button" aria-pressed="true" disabled title="Zaznacz i przesuń linię lub jej końce"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m8 4 16 14-9 1-5 9zM18 23h10m-3-3 3 3-3 3"/></svg><span>Zaznacz</span></button>
+            <button id="plan-line" aria-haspopup="menu" class="cad-tool" type="button" aria-pressed="false" disabled title="Linia — wskaż początek i koniec; Shift: kąty co 45°"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m7 25 18-18"/><rect x="4" y="22" width="6" height="6"/><rect x="22" y="4" width="6" height="6"/></svg><span>Linia</span></button>
+
+            <button class="cad-tool" type="button" data-plan-shape="arc" aria-haspopup="menu" aria-pressed="false" disabled title="Łuk — wskaż początek, punkt pośredni i koniec"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25a11 16 0 0 1 22 0"/><path d="M3 25h4M25 25h4M14 9h4"/></svg><span>Łuk</span></button>
+            <button class="cad-tool" type="button" data-plan-shape="rectangle" aria-pressed="false" disabled title="Prostokąt — wskaż przeciwległe narożniki; Shift: kwadrat"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="8" width="22" height="16"/><path d="M3 6h4v4M25 22h4v4"/></svg><span>Prostokąt</span></button>
+            <button class="cad-tool" type="button" data-plan-shape="circle" aria-pressed="false" disabled title="Koło — wskaż środek i punkt na obwodzie"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M13 16h6M16 13v6m0-3 8-8"/></svg><span>Koło</span></button>
+            <button id="plan-edit" class="cad-tool" type="button" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h24m-12-7v14"/><circle cx="16" cy="16" r="3"/></svg><span>Edytuj</span></button>
+            <button id="plan-trim" class="cad-tool" type="button" aria-pressed="false" disabled title="Przytnij — usuń fragment pomiędzy przecięciami"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4v24M24 4v24M3 16h5m16 0h5"/><path d="M11 16h10" stroke-dasharray="2 3"/><path d="m13 22 6 6m0-6-6 6"/></svg><span>Przytnij</span></button>
+            <button class="cad-tool" type="button" data-plan-measure="length" aria-pressed="false" disabled title="Długość — kliknij linię i ustaw jej długość"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 7v20M27 7v20M5 20h22M9 16l-4 4 4 4m14-8 4 4-4 4M8 9h16"/></svg><span>Długość</span></button>
+
+          </div>
+          <button id="plan-bindings" aria-haspopup="menu" class="cad-tool" type="button" aria-pressed="false" disabled title="Wybierz lini&#281; i ustaw jej wi&#261;zanie"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25h22M5 25V5M5 25 25 5M13 25v-8H5"/></svg><span>Wi&#261;zania / k&#261;ty</span></button>
+          <button id="plan-precision" class="cad-tool" type="button" aria-haspopup="menu" title="Siatka, przyciąganie i automatyczne połączenia"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9"/><path d="M16 2v9m0 10v9M2 16h9m10 0h9"/></svg><span>Precyzja</span></button>
+          <label id="plan-background-control" hidden><input id="plan-background-visible" type="checkbox" checked> Podkład graficzny</label>
+          <label class="plan-dimensions-control"><input id="plan-dimensions-visible" type="checkbox" checked> <span id="plan-dimensions-label">Wymiary (cm)</span></label>
+          <label class="plan-dimensions-control"><input id="plan-construction" type="checkbox"> Pomocnicze</label>
+          <button id="plan-layers" type="button" popovertarget="layers-menu">Warstwy</button>
+          <button id="plan-orbit-toggle" class="cad-tool orbit-tool" type="button" aria-label="Widok 3D" aria-pressed="false" title="Otwórz widok 3D" disabled><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 12 7v13l-12 7-12-7V10Zm0 14L4 10m12 7 12-7M16 17v13M4 23l12-7 12 7"/></svg></button>
+          <button id="plan-faces" class="cad-tool orbit-tool" type="button" aria-label="Powierzchnie" aria-pressed="false" title="Wybierz powierzchnie w 3D. Ctrl + kliknięcie dodaje lub odznacza obszar." disabled hidden><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m3 20 12-9 14 6-12 10Z"/><path d="m19 3 2 12 3-4 5-1Z"/><path d="m6 17 9-6 4 2" stroke-width="3"/></svg></button>
+          <button id="plan-extrude" class="cad-tool orbit-tool" type="button" aria-label="Wyciągnij" title="Wyciągnij zaznaczone powierzchnie prostopadle do płaszczyzny szkicu" disabled hidden><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m4 23 12-6 12 6-12 6Zm0 0V13l12-6 12 6v10M4 13l12 6 12-6M16 19v10M16 14V2m-4 4 4-4 4 4"/></svg></button>
+          <div id="extrude-controls" hidden>
+            <label>Wysokość (cm) <input id="extrude-height" type="number" step="any" value="0" aria-label="Wysokość wyciągnięcia (cm)"></label>
+          </div>
+          <div id="orbit-view-tools" hidden>
+            <select id="orbit-projection" aria-label="Projekcja 3D" title="Projekcja 3D"><option value="axonometric">Aksonometria</option><option value="perspective">Perspektywa</option></select>
+            <button id="camera-settings-toggle" type="button" popovertarget="camera-settings">Kamera</button>
+            <div id="camera-settings" class="cad-small-menu" popover>
+            <label>Obrót <select id="orbit-step-axis"><option value="yaw">W poziomie</option><option value="pitch">W pionie</option><option value="roll">Przechylenie</option></select></label>
+            <div class="orbit-step-controls"><button id="orbit-step-back" type="button" aria-label="Obróć do poprzednich 45 stopni">−45°</button><button id="orbit-step-next" type="button" aria-label="Obróć do następnych 45 stopni">+45°</button><output id="orbit-step-angle">0°</output></div>
+            </div>
+          </div>
+          <input id="plan-files" type="file" accept="image/*" multiple hidden>
+        </div>
+        <div class="plan-tabs-bar"><div id="plan-list" class="plan-list" role="group" aria-label="Wczytane rzuty"></div><button id="plan-more" class="plan-more" type="button" aria-label="Opcje aktualnego rzutu" aria-haspopup="menu" title="Opcje aktualnego rzutu" hidden>⋯</button></div>
+        <div id="plan-menu" popover><button id="plan-delete" type="button">Usuń rzut</button></div>
+        <div id="plan-settings" class="cad-small-menu" popover></div>
+        <div id="view-visibility" class="cad-small-menu" popover></div>
+        <div id="layers-menu" class="cad-small-menu" popover>
+          <div id="layer-list"></div>
+          <div class="layer-new"><input id="layer-name" aria-label="Nazwa nowej warstwy" placeholder="Nazwa warstwy" maxlength="80"><button id="layer-add" type="button">Dodaj</button></div>
+          <button id="selection-construction" type="button">Zmień zaznaczone: pomocnicze / zwykłe</button>
+        </div>
+        <dialog id="layer-delete-dialog" aria-labelledby="layer-delete-title">
+          <h3 id="layer-delete-title">Usuń warstwę</h3>
+          <p id="layer-delete-summary"></p>
+          <div class="layer-delete-actions">
+            <button id="layer-delete-move" type="button" autofocus>Przenieś zawartość na default</button>
+            <button id="layer-delete-content" type="button">Usuń warstwę z zawartością</button>
+            <button id="layer-delete-cancel" type="button">Anuluj</button>
+          </div>
+        </dialog>
+        <form id="precision-menu" class="cad-small-menu" popover>
+          <label><input name="infer" type="checkbox" checked> Łącz końce przy rysowaniu</label>
+          <label><input name="grid" type="checkbox" checked> Pokaż siatkę metrową</label>
+          <label><input name="gridSnap" type="checkbox"> Przyciągaj do siatki</label>
+          <label>Krok przyciągania (m)<input name="step" type="number" min="0.001" step="any" value="0.1"></label>
+          <label>Przyciąganie do obiektów<select name="snap"><option value="all">Punkty charakterystyczne</option><option value="end">Tylko końce</option><option value="none">Wyłączone</option></select></label>
+          <label>Przeciąganie obiektu<select name="move"><option value="stretch">Przesuń zaznaczone, dopasuj sąsiadów</option><option value="connected">Przesuń cały powiązany obrys</option></select></label>
+          <label>Jednostka wymiarów<select name="dimensionUnit"><option value="cm">cm</option><option value="m">m</option><option value="mm">mm</option></select></label><label>Miejsca po przecinku<input name="dimensionPrecision" type="number" min="0" max="4" step="1" value="1"></label>
+        </form>
+        <form id="object-properties" class="cad-small-menu" popover>
+          <strong id="object-properties-title">Właściwości</strong>
+          <div id="round-properties"><label>Promień (cm)<input name="radius" type="number" min="0.01" step="any"></label><label><input name="fixRadius" type="checkbox"> Ustal promień</label></div>
+          <div id="background-properties"><label>Szerokość podkładu (cm)<input name="width" type="number" min="0.01" step="any"></label><label>Wysokość podkładu (cm)<input name="height" type="number" min="0.01" step="any"></label><label>Obrót (°)<input name="rotation" type="number" step="any"></label><button id="background-calibrate" type="button">Kalibruj odległością dwóch punktów</button></div>
+          <button type="submit">Zastosuj</button>
+        </form>
+        <form id="calibration-menu" class="cad-small-menu" popover><label>Rzeczywista odległość (m)<input name="distance" type="number" min="0.001" step="any" required></label><button type="submit">Ustaw skalę podkładu</button></form>
+        <form id="dimension-properties" class="cad-small-menu" popover><strong id="dimension-properties-title">Wymiar</strong><div id="dimension-driving-controls"><label>Odległość (m)<input name="distance" type="number" min="0" step="any"></label><label><input name="fixed" type="checkbox"> Ustal odległość</label><button type="submit">Zastosuj</button></div><button id="dimension-delete" type="button">Usuń ten wymiar</button></form>
+        <form id="transform-menu" class="cad-small-menu" popover><label>Przesuń w poziomie (m)<input name="dx" type="number" step="any" value="0"></label><label>Przesuń w pionie (m)<input name="dy" type="number" step="any" value="0"></label><label>Obróć wokół środka zaznaczenia (°)<input name="angle" type="number" step="any" value="0"></label><label>Skala zaznaczenia<input name="factor" type="number" min="0.001" step="any" value="1" required></label><label><input name="copy" type="checkbox"> Utwórz kopię</label><button type="submit">Zastosuj</button></form>
+<div id="circle-method-menu" class="tool-options-menu" popover aria-label="Sposoby rysowania okręgów"><button class="cad-tool" type="button" data-circle-method="radius"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M16 16 25 9M13 16h6m-3-3v6"/></svg><span>Środek, promień<small>Środek → punkt na obwodzie lub promień</small></span></button><button class="cad-tool" type="button" data-circle-method="diameter"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M16 16 25 9M13 16h6m-3-3v6"/></svg><span>Środek, średnica<small>Środek → długość średnicy</small></span></button><button class="cad-tool" type="button" data-circle-method="two"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M16 16 25 9M13 16h6m-3-3v6"/></svg><span>2 punkty średnicy<small>Pierwszy koniec → drugi koniec średnicy</small></span></button><button class="cad-tool" type="button" data-circle-method="three"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M16 16 25 9M13 16h6m-3-3v6"/></svg><span>3 punkty na okręgu<small>Trzy punkty na obwodzie</small></span></button><button class="cad-tool" type="button" data-circle-method="ttr"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M16 16 25 9M13 16h6m-3-3v6"/></svg><span>Styczny do 2 prostych, promień<small>Dwie proste → promień</small></span></button><button class="cad-tool" type="button" data-circle-method="tangent3"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11"/><path d="M16 16 25 9M13 16h6m-3-3v6"/></svg><span>Styczny do 3 prostych<small>Wskaż trzy proste w pobliżu punktów styczności</small></span></button></div><div id="arc-method-menu" class="tool-options-menu" popover aria-label="Sposoby rysowania krzywych"><button class="cad-tool" type="button" data-arc-method="three"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25Q16 0 27 25"/><circle cx="5" cy="25" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="27" cy="25" r="2"/></svg><span>3 punkty: początek → punkt na łuku → koniec (AutoCAD)</span></button><button class="cad-tool" type="button" data-arc-method="ends"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25Q16 0 27 25"/><path d="M3 25h5m16 0h5M14 12h4"/></svg><span>3 punkty: początek → koniec → punkt na łuku (Inventor)</span></button><button class="cad-tool" type="button" data-arc-method="center"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26V6a20 20 0 0 1 20 20z"/><circle cx="6" cy="26" r="2"/></svg><span>Środek → początek → koniec</span></button><button class="cad-tool" type="button" data-arc-method="bezier"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 5Q5 27 27 22"/><path d="M5 5v22l22-5" stroke-dasharray="3 3"/><circle cx="5" cy="27" r="2"/></svg><span>B&#233;zier: ko&#324;ce i uchwyt</span></button><button class="cad-tool" type="button" data-arc-method="startCenter"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25Q16 1 27 25"/><circle cx="5" cy="25" r="2"/><circle cx="27" cy="25" r="2"/></svg><span>Początek, środek, koniec</span></button><button class="cad-tool" type="button" data-arc-method="tangent"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25Q16 1 27 25"/><circle cx="5" cy="25" r="2"/><circle cx="27" cy="25" r="2"/></svg><span>Łuk styczny: koniec elementu → koniec łuku</span></button><button class="cad-tool" type="button" data-arc-method="radius"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25Q16 1 27 25"/><circle cx="5" cy="25" r="2"/><circle cx="27" cy="25" r="2"/></svg><span>Początek, koniec, promień</span></button><button class="cad-tool" type="button" data-arc-method="angle"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25Q16 1 27 25"/><circle cx="5" cy="25" r="2"/><circle cx="27" cy="25" r="2"/></svg><span>Środek, początek, kąt</span></button></div><div id="dimension-method-menu" class="tool-options-menu" popover><button class="cad-tool" type="button" data-dimension-method="pointDistance" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25 27 6M5 20v5h5M22 6h5v5"/><circle cx="5" cy="25" r="2"/></svg><span>Mi&#281;dzy punktami</span></button><button class="cad-tool" type="button" data-dimension-method="pointHorizontal" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 8v20M27 16v12M5 24h22m-18-4-4 4 4 4m14-8 4 4-4 4"/><circle cx="5" cy="8" r="2"/></svg><span>Punkty: poziomo</span></button><button class="cad-tool" type="button" data-dimension-method="pointVertical" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 5h23M14 27h14M24 5v22m-4-18 4-4 4 4m-8 14 4 4 4-4"/><circle cx="5" cy="5" r="2"/></svg><span>Punkty: pionowo</span></button><button class="cad-tool" type="button" data-dimension-method="partialArcLength" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 26a11 17 0 0 1 22 0M3 14a14 20 0 0 1 13-10M3 10v4h4M12 2l4 2-2 4"/></svg><span>Fragment &#322;uku</span></button><button class="cad-tool" type="button" data-dimension-method="aligned"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 23 23 5M8 28 28 8M5 25l6 1-1-6m13-13 1 6-6-1"/></svg><span>Długość odcinka</span></button><button class="cad-tool" type="button" data-dimension-method="horizontal"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 6v22M27 14v14M5 23h22m-18-4-4 4 4 4m14-8 4 4-4 4M5 7l22 8"/></svg><span>Wymiar poziomy</span></button><button class="cad-tool" type="button" data-dimension-method="vertical"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 5h22M13 27h14M23 5v22m-4-18 4-4 4 4m-8 14 4 4 4-4M6 5l8 22"/></svg><span>Wymiar pionowy</span></button><button class="cad-tool" type="button" data-dimension-method="chain"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8v19M12 8v19M21 8v19M29 8v19M3 21h26m-23-3-3 3 3 3m3-6 3 3-3 3m9-6 3 3-3 3m8-6 3 3-3 3"/></svg><span>Łańcuch</span></button><button class="cad-tool" type="button" data-dimension-method="totalHorizontal"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8v20M29 8v20M3 23h26m-22-4-4 4 4 4m18-8 4 4-4 4M3 14h9V8h9v6h8"/></svg><span>Całkowity poziomy</span></button><button class="cad-tool" type="button" data-dimension-method="totalVertical"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 3h24M4 29h24M23 3v26m-4-22 4-4 4 4m-8 18 4 4 4-4M12 3v9H6v9h6v8"/></svg><span>Całkowity pionowy</span></button><button class="cad-tool" type="button" data-dimension-method="distance"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 6h24M4 26h24M16 6v20m-4-16 4-4 4 4m-8 12 4 4 4-4"/></svg><span>Odstęp między liniami</span></button><button class="cad-tool" type="button" data-dimension-method="radius"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M26 16a10 10 0 1 1-10-10M16 16 26 6m-6 0h6v6M13 16h6m-3-3v6"/></svg><span>Promień</span></button><button class="cad-tool" type="button" data-dimension-method="diameter"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M26 16a10 10 0 1 1-20 0 10 10 0 0 1 20 0M6 26 26 6m-6 0h6v6M6 20v6h6"/></svg><span>Średnica</span></button><button class="cad-tool" type="button" data-dimension-method="arcLength"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25a11 16 0 0 1 22 0M2 25a14 21 0 0 1 28 0M1 21l1 4 4-2m20 0 4 2 1-4"/></svg><span>Długość łuku</span></button></div><div id="line-method-menu" class="tool-options-menu" popover><button class="cad-tool" type="button" data-line-method="line"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27 27 5"/></svg><span>Linia</span></button><button class="cad-tool" type="button" data-plan-shape="polyline" aria-pressed="false" disabled title="Polilinia — klikaj kolejne punkty; Enter kończy, kliknięcie początku zamyka obrys; Shift: kąty co 45°"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m5 25 7-17 9 11 7-13"/><rect x="3" y="23" width="4" height="4"/><rect x="10" y="6" width="4" height="4"/><rect x="19" y="17" width="4" height="4"/><rect x="26" y="4" width="4" height="4"/></svg><span>Polilinia</span></button></div><div id="modify-method-menu" class="tool-options-menu" popover aria-label="Modyfikacja geometrii"><button class="cad-tool" type="button" data-line-edit="add"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 16h22M16 5v22"/></svg><span>Dodaj punkt / podziel linię</span></button><button class="cad-tool" type="button" data-line-edit="remove"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 16h22"/></svg><span>Usuń wierzchołek</span></button><button class="cad-tool" type="button" data-line-edit="break"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h8m8 0h8M12 11v10m8-10v10"/></svg><span>Rozdziel</span></button><button class="cad-tool" type="button" data-line-edit="join"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h24M16 11v10"/></svg><span>Połącz</span></button><button class="cad-tool" type="button" data-line-edit="extend"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h23M27 4v24m-6-17 5 5-5 5"/></svg><span>Wydłuż do granicy</span></button></div><div id="binding-method-menu" class="tool-options-menu" popover><button class="cad-tool" type="button" data-plan-measure="angle" aria-pressed="false" disabled title="Kąt — kliknij dwie linie i ustaw kąt między nimi"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 26h23M5 26 23 5M14 26a9 9 0 0 0-3-7"/><path d="M20 16h5"/></svg><span>Kąt między liniami</span></button><button class="cad-tool" type="button" data-binding-method="horizontal"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 16h22"/></svg><span>Poziome</span></button><button class="cad-tool" type="button" data-binding-method="vertical"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5v22"/></svg><span>Pionowe</span></button><button class="cad-tool" type="button" data-binding-method="angle"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 26h22M5 26 26 5"/></svg><span>K&#261;t do poziomu</span></button><button class="cad-tool" type="button" data-binding-method="none"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m7 7 18 18M25 7 7 25"/></svg><span>Usu&#324; wi&#261;zanie</span></button><button class="cad-tool" type="button" data-relation-type="parallel"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 10h22M5 22h22"/></svg><span>Równoległe</span></button><button class="cad-tool" type="button" data-relation-type="perpendicular"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25h22M16 25V5"/></svg><span>Prostopadłe</span></button><button class="cad-tool" type="button" data-relation-type="collinear"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16h10m6 0h10M13 12v8m6-8v8"/></svg><span>Współliniowe</span></button><button class="cad-tool" type="button" data-relation-type="equal"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 12h18M7 20h18"/></svg><span>Równe</span></button><button class="cad-tool" type="button" data-relation-type="coincident"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h10m4 0h10M14 12h4v8h-4z"/></svg><span>Połącz końce</span></button><button class="cad-tool" type="button" data-relation-type="pointOn"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 24 28 8M16 12v8"/></svg><span>Punkt na obiekcie</span></button><button class="cad-tool" type="button" data-relation-type="concentric"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v26M3 16h26"/></svg><span>Wspólny środek</span></button><button class="cad-tool" type="button" data-relation-type="tangent"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 25h26M5 25a11 11 0 1 1 22 0"/></svg><span>Styczne</span></button><button class="cad-tool" type="button" data-relation-type="symmetric"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v26M4 22l8-15v15zm24 0L20 7v15z"/></svg><span>Symetria</span></button><button class="cad-tool" type="button" data-relation-type="smooth"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 24Q16 24 16 16T29 8"/></svg><span>Gładkie przejście</span></button><button class="cad-tool" type="button" data-binding-method="fix"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="13" width="18" height="15" rx="2"/><path d="M11 13V9a5 5 0 0 1 10 0v4"/></svg><span>Unieruchom</span></button><button class="cad-tool" type="button" data-binding-method="fixPoint"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="5"/><path d="M16 3v8m0 10v8M3 16h8m10 0h8"/></svg><span>Unieruchom punkt</span></button></div>
+        <form id="plane-angle-menu" popover>
+          <div class="binding-menu-options"><button type="button" data-plane-binding="horizontal" aria-pressed="false">Poziome</button><button type="button" data-plane-binding="vertical" aria-pressed="false">Pionowe</button><button type="button" data-plane-binding="angle" aria-pressed="false">K&#261;t do poziomu</button></div>
+          <div id="plane-angle-entry" hidden><label>K&#261;t do poziomu (&#176;)<input name="degrees" type="number" min="-180" max="180" step="any"></label><button type="submit">Ustaw</button></div>
+          <button type="button" id="plane-angle-release">Usu&#324; wi&#261;zanie</button>
+        </form>
+        <p id="plan-import-status" role="status"></p>
+        <div id="wall-tabs-bar" hidden><button id="wall-previous" type="button" aria-label="Poprzednia ściana" title="Poprzednia ściana">‹</button><button id="wall-next" type="button" aria-label="Następna ściana" title="Następna ściana">›</button><div id="wall-tabs" role="tablist" aria-label="Ściany ekspozycji"></div><button id="wall-picker-toggle" type="button" popovertarget="wall-picker" aria-haspopup="menu" aria-expanded="false" aria-label="Wybierz ścianę z listy" title="Wszystkie ściany">▾</button><div id="wall-picker" role="menu" aria-label="Wszystkie ściany" popover></div></div>
+        <div class="plan-board" id="plan-board" aria-label="Pole rzutu">
+          <span id="wall-hover-name" role="tooltip" hidden></span>
+          <div id="exhibition-confirm" role="dialog" aria-label="Wybrana ściana" hidden><span id="wall-part-tools" role="group" aria-label="Fragmenty ściany" hidden><button id="wall-part-add" type="button" aria-pressed="false">Dodaj fragment</button><button id="wall-part-remove" type="button" aria-pressed="false">Odejmij fragment</button></span><button id="exhibition-enter" type="button">Zatwierdź ścianę</button></div>
+          <p id="plan-placeholder">Utwórz rzut lub dodaj do niego grafiki.</p>
+          <div id="plan-surface" hidden>
+            <img id="plan-image" alt="" hidden>
+          </div>
+          <form id="sketch-input" hidden><label><span id="sketch-input-label">Promień (cm)</span><input id="sketch-input-value" type="number" step="any" required aria-label="Wartość parametru szkicu"></label><button type="submit">Zatwierdź</button></form>
+          <canvas id="plan-lines" tabindex="0" aria-label="Rysowanie linii: kliknij początek i koniec; Shift: kąty co 45 stopni; Escape: anuluj. Spacja i przeciągnięcie przesuwają widok."></canvas>
+          <canvas id="plan-orbit" tabindex="0" aria-label="Obrót rzutu w 3D — przeciągnij, aby obrócić widok" hidden></canvas>
+          <svg id="orbit-overlay" aria-hidden="true" hidden><line id="extrude-axis" hidden/></svg>
+          <button id="extrude-handle" type="button" aria-label="Przeciągnij, aby zmienić wysokość wyciągnięcia" title="Przeciągnij, aby wyciągnąć powierzchnie" hidden>↥</button>
+          <div id="orbit-gizmo" aria-label="Orientacja widoku 3D" hidden>
+            <svg id="orbit-gizmo-svg" viewBox="0 0 128 128" aria-label="Trzy płaszczyzny i osie widoku">
+              <defs><radialGradient id="orbit-ball"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#c3ccd3"/><stop offset="1" stop-color="#5c6e7b"/></radialGradient></defs>
+              <g fill="none" aria-hidden="true" pointer-events="none">
+                <path class="orbit-rotation-track" data-orbit-track="x" stroke="#ed7878"/>
+                <path class="orbit-rotation-track" data-orbit-track="y" stroke="#8ac983"/>
+                <path class="orbit-rotation-track" data-orbit-track="z" stroke="#7faff0"/>
+              </g>
+              <g id="orbit-gizmo-planes">
+                <polygon data-orbit-plane="xy" role="button" tabindex="0" aria-label="Ustaw widok XY" fill="#5b9edc55" stroke="#75b8f1"/>
+                <polygon data-orbit-plane="xz" role="button" tabindex="0" aria-label="Ustaw widok XZ" fill="#69bd7355" stroke="#86d58c"/>
+                <polygon data-orbit-plane="yz" role="button" tabindex="0" aria-label="Ustaw widok YZ" fill="#db777755" stroke="#f59898"/>
+              </g>
+              <g id="orbit-rotation-controls">
+              <g data-orbit-axis="x" data-orbit-direction="1" data-orbit-rotation-plane="yz" role="button" tabindex="0" aria-label="Obrót +15° wokół osi X w płaszczyźnie YZ" class="orbit-rotation" style="color:#ed7878"><title>Płaszczyzna YZ: obrót +15° wokół osi X; przeciągnij, aby obracać</title><path class="orbit-rotation-hit"/><path class="orbit-rotation-line"/><polygon class="orbit-rotation-head"/></g>
+              <g data-orbit-axis="x" data-orbit-direction="-1" data-orbit-rotation-plane="yz" role="button" tabindex="0" aria-label="Obrót −15° wokół osi X w płaszczyźnie YZ" class="orbit-rotation" style="color:#ed7878"><title>Płaszczyzna YZ: obrót −15° wokół osi X; przeciągnij, aby obracać</title><path class="orbit-rotation-hit"/><path class="orbit-rotation-line"/><polygon class="orbit-rotation-head"/></g>
+              <g data-orbit-axis="y" data-orbit-direction="1" data-orbit-rotation-plane="xz" role="button" tabindex="0" aria-label="Obrót +15° wokół osi Y w płaszczyźnie XZ" class="orbit-rotation" style="color:#8ac983"><title>Płaszczyzna XZ: obrót +15° wokół osi Y; przeciągnij, aby obracać</title><path class="orbit-rotation-hit"/><path class="orbit-rotation-line"/><polygon class="orbit-rotation-head"/></g>
+              <g data-orbit-axis="y" data-orbit-direction="-1" data-orbit-rotation-plane="xz" role="button" tabindex="0" aria-label="Obrót −15° wokół osi Y w płaszczyźnie XZ" class="orbit-rotation" style="color:#8ac983"><title>Płaszczyzna XZ: obrót −15° wokół osi Y; przeciągnij, aby obracać</title><path class="orbit-rotation-hit"/><path class="orbit-rotation-line"/><polygon class="orbit-rotation-head"/></g>
+              <g data-orbit-axis="z" data-orbit-direction="1" data-orbit-rotation-plane="xy" role="button" tabindex="0" aria-label="Obrót +15° wokół osi Z w płaszczyźnie XY" class="orbit-rotation" style="color:#7faff0"><title>Płaszczyzna XY: obrót +15° wokół osi Z; przeciągnij, aby obracać</title><path class="orbit-rotation-hit"/><path class="orbit-rotation-line"/><polygon class="orbit-rotation-head"/></g>
+              <g data-orbit-axis="z" data-orbit-direction="-1" data-orbit-rotation-plane="xy" role="button" tabindex="0" aria-label="Obrót −15° wokół osi Z w płaszczyźnie XY" class="orbit-rotation" style="color:#7faff0"><title>Płaszczyzna XY: obrót −15° wokół osi Z; przeciągnij, aby obracać</title><path class="orbit-rotation-hit"/><path class="orbit-rotation-line"/><polygon class="orbit-rotation-head"/></g>
+              </g>
+              <g class="orbit-axes" fill="none" stroke-width="1.5"><line id="orbit-axis-x" x1="64" y1="76" stroke="#ed7878"/><line id="orbit-axis-y" x1="64" y1="76" stroke="#8ac983"/><line id="orbit-axis-z" x1="64" y1="76" stroke="#7faff0"/></g>
+              <g class="orbit-axis-labels" text-anchor="middle" font-size="12"><text id="orbit-axis-label-x" fill="#ed7878">X</text><text id="orbit-axis-label-y" fill="#8ac983">Y</text><text id="orbit-axis-label-z" fill="#7faff0">Z</text></g>
+              <foreignObject x="56" y="68" width="16" height="16"><button id="orbit-gizmo-home" type="button" aria-label="Widok izometryczny" title="Widok izometryczny"></button></foreignObject>
+              <circle cx="64" cy="76" r="6" fill="url(#orbit-ball)" class="orbit-ball"/>
+              <g id="orbit-gizmo-default" role="button" tabindex="0" aria-label="Widok domyślny">
+                <title>Widok domyślny</title>
+                <polygon points="8,106 27,96 46,106 27,116" fill="#8b9ba844" stroke="#b2c1cc"/>
+                <path d="m21 106 6-5 6 5m-10-1v6h8v-6m-5 6v-4h2v4" fill="none" stroke="#e0e8ed" stroke-width="1.2" pointer-events="none"/>
+              </g>
+            </svg>
+          </div>
+          <aside id="plan-measurements" class="plan-inspector" aria-label="Wymiary" hidden><div id="selection-measurements"></div></aside>
+          <aside id="plan-constraints-panel" class="plan-inspector" aria-label="Wiązania" hidden><div id="selection-constraints"></div></aside>
+          <button id="selection-more" type="button" popovertarget="plan-selection-actions" aria-label="Operacje na zaznaczeniu" title="Operacje na zaznaczeniu" hidden>⋯</button>
+          <div id="viewport-controls" role="group" aria-label="Sterowanie widokiem"><div id="view-mode-switch" role="group" aria-label="Widok rzutu"><button id="view-mode-2d" type="button" aria-label="Edytuj rzut 2D" aria-pressed="true">2D</button><button id="view-mode-walls" type="button" aria-pressed="false">Ściany ekspozycji</button><button id="view-mode-layout" type="button" aria-pressed="false">Układ ekspozycji</button></div></div>
+          <div class="plan-zoom-controls" hidden>
+            <button id="plan-zoom-out" type="button" aria-label="Oddal widok" title="Oddal widok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+            <button id="plan-zoom-reset" type="button" aria-label="Dopasuj rzut 2D" title="Dopasuj cały widok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M7 7h10v10H7Z"/></svg><span id="plan-zoom-label">100%</span></button>
+            <button id="plan-zoom-in" type="button" aria-label="Przybliż widok" title="Przybliż widok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button>
+          </div>
+        </div>
+        <section id="exhibition-editor" aria-label="Układanie wystawy" hidden>
+          <div class="exhibition-toolbar">
+            <button id="exhibition-undo" type="button" aria-label="Cofnij zmianę wystawy" disabled>↶</button><button id="exhibition-redo" type="button" aria-label="Ponów zmianę wystawy" disabled>↷</button>
+            <button id="exhibition-select" type="button" aria-pressed="true">Zaznacz</button><button id="exhibition-line" type="button" aria-pressed="false">Linia pomocnicza</button>
+            <button id="exhibition-placeholder" type="button" aria-pressed="false">Pusty obraz</button>
+            <button id="exhibition-measure-x" type="button" aria-pressed="false" title="Odległość pozioma">↔ Pomiar</button><button id="exhibition-measure-y" type="button" aria-pressed="false" title="Odległość pionowa">↕ Pomiar</button>
+            <label><input id="exhibition-snap" type="checkbox" checked> Przyciąganie</label>
+            <button id="exhibition-panel-toggle" type="button" aria-expanded="true" aria-controls="exhibition-sidebar" title="Pokaż lub ukryj obrazy i właściwości">Obrazy</button>
+          </div>
+          <div class="exhibition-layout">
+            <div class="exhibition-stage"><svg id="exhibition-wall" tabindex="0" role="application" aria-label="Ściana wystawy"></svg><form id="exhibition-dimension-editor" hidden><input id="exhibition-distance" type="number" min="0" step="any" required aria-label="Odległość (cm)"><button type="submit" aria-label="Ustaw odległość">✓</button></form><p id="exhibition-status" role="status" aria-live="polite"></p></div>
+            <aside id="exhibition-sidebar" class="exhibition-sidebar" aria-label="Obrazy do wystawy">
+              <form id="exhibition-properties" hidden>
+                <strong id="exhibition-work-title"></strong><p id="exhibition-work-size"></p>
+                <div id="exhibition-placeholder-properties" hidden><label>Nazwa<input name="placeholderTitle" maxlength="80"></label><label>Szerokość<input name="placeholderWidthCm" type="number" min="0.01" step="any"></label><label>Wysokość<input name="placeholderHeightCm" type="number" min="0.01" step="any"></label></div>
+                <label>Od lewej<input name="x" type="number" step="any" min="0" required></label><label>Od dołu<input name="y" type="number" step="any" min="0" required></label><label>Grubość<input name="depthCm" type="number" step="any" min="0" value="3" required></label>
+                <button type="submit">Ustaw pozycję</button>
+                <button id="exhibition-delete" type="button">Usuń ze ściany</button>
+              </form>
+              <h3>Moje obrazy</h3><div id="exhibition-library"></div>
+            </aside>
+          </div>
+        </section>
+        <div id="plan-selection-actions" popover hidden>
+          <span id="plan-selection-count"></span>
+          <button id="selection-lock" type="button" title="Zablokuj zaznaczone elementy">Zablokuj</button>
+          <button id="selection-unlock" type="button" title="Odblokuj zaznaczone elementy">Odblokuj</button>
+          <button id="selection-delete" type="button" title="Usuń niezablokowane elementy (Delete)">Usuń</button>
+          <button id="selection-properties" type="button">Właściwości</button><button id="selection-detach" type="button">Rozłącz końce</button>
+          <button id="selection-transform" type="button">Przekształć / kopiuj</button>
+        </div>
+        <form id="line-properties" hidden>
+          <label>Rodzaj pomiaru<select name="dimensionType"><option value="aligned">Długość odcinka</option><option value="horizontal">Odległość pozioma</option><option value="vertical">Odległość pionowa</option></select></label>
+          <label>Długość (m)<input name="lineLength" type="number" min="0" max="10000" step="any" placeholder="Ustal długość" required></label>
+          <label>Linia odniesienia<select name="reference"><option value="">Poziom</option></select></label>
+          <label>Kąt (°)<input name="lineAngle" type="number" min="-360" max="360" step="any" required></label>
+          <label class="constraint-option"><input name="fixLength" type="checkbox"> Ustal długość</label>
+          <label class="constraint-option"><input name="fixAngle" type="checkbox"> Ustal kąt</label>
+          <label>Wiązanie kierunku<select name="directionBinding"><option value="none">Swobodny kierunek</option><option value="horizontal">Poziomo</option><option value="vertical">Pionowo</option><option value="angle">Kąt do poziomu</option></select></label>
+          <label id="direction-angle-field">Kąt względem poziomu rzutu (°)<input name="directionAngle" type="number" min="-180" max="180" step="any" value="0" title="0° — poziomo, 90° — pionowo. Wpisanie kąta ustala wiązanie kierunku."></label>
+          <button type="submit">Zastosuj</button>
+          <button id="line-collinear" type="button" disabled>Współliniowo</button>
+          <button id="line-lock" class="icon-button" type="button" aria-label="Zablokuj linię" aria-pressed="false" title="Zablokuj linię"></button>
+          <span id="line-scale-hint"></span>
+        </form>
+        <p id="plan-save-status" role="status"></p>
+      </section>
+    </main>
+    <div id="notifications" role="status" aria-live="polite" aria-atomic="false"></div>
+  </body>
+</html>

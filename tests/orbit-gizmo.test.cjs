@@ -1,0 +1,29 @@
+const {renderValues}=require('./render-values.cjs');
+const {test,before,after}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const {session,launch,near}=require('./cad-test-helpers.cjs');
+const source=fs.readFileSync(path.resolve(__dirname,'../app.js'),'utf8'),scope={structuredClone};vm.runInNewContext(source.slice(0,source.indexOf('\n(() => {'))+'\nthis.O=PlanOrbit;',scope);
+test('Unit: XY/XZ/YZ presets face their corresponding plane and preserve 3D lengths',()=>{
+  for(const [plane,normal]of [['xy',{x:0,y:0,z:1}],['xz',{x:0,y:1,z:0}],['yz',{x:1,y:0,z:0}]]){const camera=scope.O.plane(plane),p=scope.O.rotate(normal,camera.yaw,camera.pitch);near(p.x,0);near(p.y,0);near(Math.abs(p.z),1);}
+  const p=scope.O.rotate({x:2,y:3,z:4},.6,.8);near(Math.hypot(p.x,p.y,p.z),Math.sqrt(29));
+});
+test('Unit: default view is the initial isometric orientation',()=>{const camera=scope.O.plane('default');assert.ok(camera);near(camera.yaw,-Math.PI/4);near(camera.pitch,Math.acos(1/Math.sqrt(3)));});
+let browser;before(async()=>{browser=await launch();});after(async()=>{await browser?.close();});
+test('E2E: clicking the default plane restores the initial view without changing the model',()=>session(browser,async({page,draw,read})=>{
+  page.setDefaultTimeout(5000);await draw('line',[[200,400],[500,450]]);const before=await read();await require('./cad-test-helpers.cjs').toggleView(page);const svg=page.locator('#orbit-gizmo-svg'),initial=await renderValues(svg),canvas=page.locator('#plan-orbit'),box=await canvas.boundingBox();
+  const defaultFace=page.locator('#orbit-gizmo-default polygon'),initialFace=await defaultFace.getAttribute('points');const orientation=()=>svg.locator('[data-orbit-plane],.orbit-axes line').evaluateAll(nodes=>nodes.map(node=>({id:node.id||node.dataset.orbitPlane,points:node.getAttribute('points'),x:node.getAttribute('x2'),y:node.getAttribute('y2')})));const initialOrientation=await orientation();
+  await page.mouse.move(box.x+box.width*.5,box.y+box.height*.6);await page.mouse.down();await page.mouse.move(box.x+box.width*.6,box.y+box.height*.8,{steps:8});await page.mouse.up();assert.notDeepEqual(await renderValues(svg),initial);
+  assert.notEqual(await defaultFace.getAttribute('points'),initialFace,'Default face must rotate with the manipulator');
+  const clickPoint=await defaultFace.evaluate(el=>{const r=el.getBoundingClientRect();for(let x=1;x<10;x++)for(let y=1;y<10;y++){const p={x:r.x+r.width*x/10,y:r.y+r.height*y/10};if(document.elementFromPoint(p.x,p.y)?.closest('#orbit-gizmo-default'))return p;}throw Error('Default plane has no visible click target');});await page.mouse.click(clickPoint.x,clickPoint.y);await page.mouse.move(box.x+box.width*.5,box.y+box.height*.6);assert.deepEqual(await orientation(),initialOrientation);assert.deepEqual(await read(),before);
+}));
+test('E2E: orientation sphere and clickable planes change only view, follow orbit, and hide in 2D',()=>session(browser,async({page,draw,read})=>{
+  page.setDefaultTimeout(5000);await draw('line',[[200,400],[500,450]]);await draw('three',[[500,450],[600,350],[700,450]]);const before=await read();const gizmo=page.locator('#orbit-gizmo');assert.ok(await gizmo.isHidden());
+  await require('./cad-test-helpers.cjs').toggleView(page);assert.ok(await gizmo.isVisible());assert.equal(await gizmo.locator('.orbit-plane-buttons,button[data-plane]').count(),0);const svg=page.locator('#orbit-gizmo-svg'),initial=await renderValues(svg);
+  const xy=gizmo.locator('[data-orbit-plane="xy"]'),xyPoint=await xy.evaluate(el=>{const r=el.getBoundingClientRect();for(let x=1;x<10;x++)for(let y=1;y<10;y++){const p={x:r.x+r.width*x/10,y:r.y+r.height*y/10};if(document.elementFromPoint(p.x,p.y)===el)return p;}throw Error('XY plane has no visible click target');});await page.mouse.click(xyPoint.x,xyPoint.y);await page.evaluate(()=>new Promise(r=>requestAnimationFrame(r)));assert.equal(await gizmo.getByRole('button',{name:'Ustaw widok XY',exact:true}).getAttribute('aria-pressed'),'true');
+  for(const plane of ['xy','xz','yz']){const button=gizmo.getByRole('button',{name:`Ustaw widok ${plane.toUpperCase()}`,exact:true});await button.press('Enter');await page.evaluate(()=>new Promise(r=>requestAnimationFrame(r)));assert.equal(await button.getAttribute('aria-pressed'),'true');assert.deepEqual(await read(),before);
+    if(plane==='xz'){const zBefore=Number(await page.locator('#orbit-axis-z').getAttribute('y2')),box=await page.locator('#plan-orbit').boundingBox();await page.mouse.move(box.x+box.width*.5,box.y+box.height*.6);await page.mouse.down();await page.mouse.move(box.x+box.width*.55,box.y+box.height*.6,{steps:5});await page.mouse.up();near(Number(await page.locator('#orbit-axis-z').getAttribute('y2')),zBefore);}
+  }
+  await gizmo.getByRole('button',{name:'Widok izometryczny',exact:true}).click();assert.deepEqual(await renderValues(svg),initial);
+  const polygon=gizmo.locator('[data-orbit-plane="xy"]');await polygon.focus();await polygon.press('Enter');await page.evaluate(()=>new Promise(r=>requestAnimationFrame(r)));assert.equal(await gizmo.getByRole('button',{name:'Ustaw widok XY',exact:true}).getAttribute('aria-pressed'),'true');
+  const canvas=page.locator('#plan-orbit'),box=await canvas.boundingBox(),flat=await renderValues(svg);await page.mouse.move(box.x+box.width*.5,box.y+box.height*.6);await page.mouse.down();await page.mouse.move(box.x+box.width*.6,box.y+box.height*.7,{steps:8});await page.mouse.up();assert.notDeepEqual(await renderValues(svg),flat);assert.equal(await gizmo.locator('[data-orbit-plane][aria-pressed="true"]').count(),0);
+  assert.deepEqual(await read(),before);await require('./cad-test-helpers.cjs').toggleView(page);assert.ok(await gizmo.isHidden());assert.deepEqual(await read(),before);
+}));

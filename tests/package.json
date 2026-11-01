@@ -1,0 +1,12 @@
+{
+  "name": "exhibition-planner-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node cad-suite.cjs --all",
+    "test:check": "node cad-suite.cjs --check"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0"
+  }
+}

@@ -1,0 +1,302 @@
+{
+  "workspace-ui.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-runner.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "3d-cache.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "gpu-mesh.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "gpu-browser.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "3d-controls.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "curved-faces.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "curved-surfaces-browser.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "extrude.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "exhibition.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "sketch-faces.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "right-mouse.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "parser.cjs": {
+    "legacy": true,
+    "kind": "unit",
+    "locks": []
+  },
+  "constraints.cjs": {
+    "legacy": true,
+    "kind": "unit",
+    "locks": []
+  },
+  "trim-geometry.cjs": {
+    "legacy": true,
+    "kind": "unit",
+    "locks": []
+  },
+  "cad-foundation.cjs": {
+    "legacy": true,
+    "kind": "unit",
+    "locks": []
+  },
+  "cad-editing.cjs": {
+    "legacy": true,
+    "kind": "unit",
+    "locks": []
+  },
+  "cad-foundation-browser.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-editing-browser.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-dimensions-browser.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-01-drawing.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-02-between-objects.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-02-point-measurements.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-point-behavior.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-tool-defaults.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "compact-inspector.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "curve-continuity.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "curve-drag-e2e.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "major-arc-movement.cjs": {
+    "legacy": true,
+    "kind": "unit",
+    "locks": []
+  },
+  "hv-endpoint.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "selection-scale.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "dimension-drag.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "plan-migration.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "bezier-tool-groups.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "save-image.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "storage.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "layers-construction.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "vertex-selection.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "layer-workflow.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "orbit-3d.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "orbit-gizmo.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "orbit-arrows.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "cad-scheduler.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "geometry-properties.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "insert-point.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "ribbon-sketch.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "sketch-methods.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "repository-layout.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "parser-browser.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "authors.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "clipboard.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "metadata.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "photo-editor.cjs": {
+    "legacy": true,
+    "kind": "e2e",
+    "locks": []
+  },
+  "case-manifest.test.cjs": {
+    "legacy": false,
+    "kind": "unit",
+    "locks": []
+  },
+  "storage-failures.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "static-hosting.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "transfer.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "collections.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "image-icons.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  },
+  "project-tree-resize.test.cjs": {
+    "legacy": false,
+    "kind": "e2e",
+    "locks": []
+  }
+}

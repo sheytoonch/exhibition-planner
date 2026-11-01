@@ -1,0 +1,330 @@
+{
+  "label": "baseline",
+  "source": "a04f937d3fd0a379c2bb7dd3380bfbcc26e6577033479689ad8cca508099deaf",
+  "viewport": {
+    "width": 1500,
+    "height": 1200
+  },
+  "results": [
+    {
+      "kind": "rectangle",
+      "dpr": 1,
+      "events": {
+        "n": 150,
+        "median": 18.399999998509884,
+        "p95": 28.400000002235174,
+        "max": 43.400000002235174
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 17,
+        "p95": 27.099999997764826,
+        "max": 41.899999998509884
+      },
+      "rafIntervals": {
+        "n": 370,
+        "median": 6,
+        "p95": 17.799999999999955,
+        "max": 41.20000000000027
+      },
+      "longTasks": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "circle",
+      "dpr": 1,
+      "events": {
+        "n": 150,
+        "median": 19.599999997764826,
+        "p95": 24,
+        "max": 55.30000000074506
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 18.100000001490116,
+        "p95": 22.199999999254942,
+        "max": 53.899999998509884
+      },
+      "rafIntervals": {
+        "n": 353,
+        "median": 6,
+        "p95": 23.299999999999955,
+        "max": 53
+      },
+      "longTasks": {
+        "n": 1,
+        "median": 56,
+        "p95": 56,
+        "max": 56
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "arc",
+      "dpr": 1,
+      "events": {
+        "n": 150,
+        "median": 18.699999999254942,
+        "p95": 26.399999998509884,
+        "max": 50.5
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 17.200000002980232,
+        "p95": 22.399999998509884,
+        "max": 48.099999997764826
+      },
+      "rafIntervals": {
+        "n": 345,
+        "median": 6.099999999999909,
+        "p95": 17.700000000000273,
+        "max": 47
+      },
+      "longTasks": {
+        "n": 1,
+        "median": 51,
+        "p95": 51,
+        "max": 51
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "hole",
+      "dpr": 1,
+      "events": {
+        "n": 150,
+        "median": 18.599999997764826,
+        "p95": 25.799999997019768,
+        "max": 36.400000002235174
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 17.199999999254942,
+        "p95": 23.699999999254942,
+        "max": 34.900000002235174
+      },
+      "rafIntervals": {
+        "n": 359,
+        "median": 6,
+        "p95": 17.799999999999955,
+        "max": 35.19999999999999
+      },
+      "longTasks": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "five",
+      "dpr": 1,
+      "events": {
+        "n": 150,
+        "median": 16.699999999254942,
+        "p95": 19.899999998509884,
+        "max": 39.30000000074506
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 15.399999998509884,
+        "p95": 18.100000001490116,
+        "max": 44.5
+      },
+      "rafIntervals": {
+        "n": 367,
+        "median": 6.099999999999909,
+        "p95": 17.699999999999818,
+        "max": 41.10000000000002
+      },
+      "longTasks": {
+        "n": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "rectangle",
+      "dpr": 2,
+      "events": {
+        "n": 150,
+        "median": 79.5,
+        "p95": 132.30000000074506,
+        "max": 137
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 78.89999999850988,
+        "p95": 130.30000000074506,
+        "max": 135.5
+      },
+      "rafIntervals": {
+        "n": 381,
+        "median": 5.900000000000546,
+        "p95": 117.79999999999927,
+        "max": 135.40000000000146
+      },
+      "longTasks": {
+        "n": 149,
+        "median": 80,
+        "p95": 133,
+        "max": 138
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "circle",
+      "dpr": 2,
+      "events": {
+        "n": 150,
+        "median": 76.69999999925494,
+        "p95": 130.30000000074506,
+        "max": 152.10000000149012
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 75.79999999701977,
+        "p95": 127.69999999925494,
+        "max": 148.30000000074506
+      },
+      "rafIntervals": {
+        "n": 414,
+        "median": 5.900000000000546,
+        "p95": 123.5,
+        "max": 152.79999999999927
+      },
+      "longTasks": {
+        "n": 150,
+        "median": 78,
+        "p95": 131,
+        "max": 153
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "arc",
+      "dpr": 2,
+      "events": {
+        "n": 150,
+        "median": 80.09999999776483,
+        "p95": 117.69999999925494,
+        "max": 122.59999999776483
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 79.30000000074506,
+        "p95": 115.59999999776483,
+        "max": 120.20000000298023
+      },
+      "rafIntervals": {
+        "n": 387,
+        "median": 5.900000000000546,
+        "p95": 111.80000000000109,
+        "max": 129.39999999999964
+      },
+      "longTasks": {
+        "n": 150,
+        "median": 82,
+        "p95": 118,
+        "max": 123
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "hole",
+      "dpr": 2,
+      "events": {
+        "n": 150,
+        "median": 71.60000000149012,
+        "p95": 124.10000000149012,
+        "max": 133.40000000223517
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 70.80000000074506,
+        "p95": 122.30000000074506,
+        "max": 131.80000000074506
+      },
+      "rafIntervals": {
+        "n": 385,
+        "median": 5.900000000000546,
+        "p95": 117.59999999999854,
+        "max": 129.40000000000146
+      },
+      "longTasks": {
+        "n": 149,
+        "median": 73,
+        "p95": 124,
+        "max": 134
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    },
+    {
+      "kind": "five",
+      "dpr": 2,
+      "events": {
+        "n": 150,
+        "median": 67.19999999925494,
+        "p95": 121.60000000149012,
+        "max": 126.5
+      },
+      "cpuRender": {
+        "n": 150,
+        "median": 66.69999999925494,
+        "p95": 118.89999999850988,
+        "max": 124.20000000298023
+      },
+      "rafIntervals": {
+        "n": 391,
+        "median": 5.900000000000546,
+        "p95": 111.80000000000109,
+        "max": 123.60000000000036
+      },
+      "longTasks": {
+        "n": 148,
+        "median": 68,
+        "p95": 122,
+        "max": 127
+      },
+      "detects": 0,
+      "gpu": null,
+      "webgl": true,
+      "modelUnchanged": true
+    }
+  ]
+}

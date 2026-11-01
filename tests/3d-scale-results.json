@@ -1,0 +1,49 @@
+{
+  "scope": "GPU component benchmark; generated independent surfaces, not a UI project",
+  "results": [
+    {
+      "count": 1,
+      "topologyMs": 5.199999999254942,
+      "buildMs": 0.5,
+      "uploadMs": 0.3999999985098839,
+      "cpuP95": 0.10000000149011612,
+      "triangles": 2,
+      "drawCalls": 1,
+      "pickCandidates": 2,
+      "error": 0
+    },
+    {
+      "count": 10,
+      "topologyMs": 1.6000000014901161,
+      "buildMs": 0.3999999985098839,
+      "uploadMs": 0.10000000149011612,
+      "cpuP95": 0.10000000149011612,
+      "triangles": 20,
+      "drawCalls": 1,
+      "pickCandidates": 10,
+      "error": 0
+    },
+    {
+      "count": 100,
+      "topologyMs": 11.599999997764826,
+      "buildMs": 2.5,
+      "uploadMs": 0.10000000149011612,
+      "cpuP95": 0.10000000149011612,
+      "triangles": 200,
+      "drawCalls": 1,
+      "pickCandidates": 12,
+      "error": 0
+    },
+    {
+      "count": 1000,
+      "topologyMs": 44.399999998509884,
+      "buildMs": 11.199999999254942,
+      "uploadMs": 0.19999999925494194,
+      "cpuP95": 0.10000000149011612,
+      "triangles": 2000,
+      "drawCalls": 8,
+      "pickCandidates": 7,
+      "error": 0
+    }
+  ]
+}

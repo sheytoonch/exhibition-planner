@@ -1,0 +1,438 @@
+[
+  {
+    "mode": "2D",
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1440,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 1440,
+      "height": 89.390625,
+      "bottom": 146.390625
+    },
+    "tabs": {
+      "x": 0,
+      "y": 146.390625,
+      "width": 1440,
+      "height": 40,
+      "bottom": 186.390625
+    },
+    "visibleToolbarControls": 21,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Linia",
+        "x": 348.265625,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Łuk",
+        "x": 426.265625,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Długość",
+        "x": 741.1875,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 819.1875,
+        "y": 124.390625,
+        "width": 106.359375,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "plan-dimensions-visible",
+        "label": "",
+        "x": 1019.546875,
+        "y": 95.1875,
+        "width": 13,
+        "height": 13,
+        "bottom": 108.1875
+      },
+      {
+        "id": "plan-construction",
+        "label": "",
+        "x": 1148.421875,
+        "y": 95.1875,
+        "width": 13,
+        "height": 13,
+        "bottom": 108.1875
+      }
+    ]
+  },
+  {
+    "mode": "2D",
+    "width": 1280,
+    "height": 800,
+    "documentWidth": 1280,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 1280,
+      "height": 169.390625,
+      "bottom": 226.390625
+    },
+    "tabs": {
+      "x": 0,
+      "y": 226.390625,
+      "width": 1280,
+      "height": 40,
+      "bottom": 266.390625
+    },
+    "visibleToolbarControls": 21,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Linia",
+        "x": 348.265625,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Łuk",
+        "x": 426.265625,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Długość",
+        "x": 741.1875,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 819.1875,
+        "y": 124.390625,
+        "width": 106.359375,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "plan-dimensions-visible",
+        "label": "",
+        "x": 1019.546875,
+        "y": 95.1875,
+        "width": 13,
+        "height": 13,
+        "bottom": 108.1875
+      },
+      {
+        "id": "plan-construction",
+        "label": "",
+        "x": 1148.421875,
+        "y": 95.1875,
+        "width": 13,
+        "height": 13,
+        "bottom": 108.1875
+      }
+    ]
+  },
+  {
+    "mode": "2D",
+    "width": 1024,
+    "height": 768,
+    "documentWidth": 1024,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 1024,
+      "height": 169.390625,
+      "bottom": 226.390625
+    },
+    "tabs": {
+      "x": 0,
+      "y": 226.390625,
+      "width": 1024,
+      "height": 40,
+      "bottom": 266.390625
+    },
+    "visibleToolbarControls": 21,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Linia",
+        "x": 348.265625,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Łuk",
+        "x": 426.265625,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Długość",
+        "x": 741.1875,
+        "y": 124.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 819.1875,
+        "y": 124.390625,
+        "width": 106.359375,
+        "height": 16,
+        "bottom": 140.390625
+      },
+      {
+        "id": "plan-dimensions-visible",
+        "label": "",
+        "x": 24,
+        "y": 175.890625,
+        "width": 13,
+        "height": 13,
+        "bottom": 188.890625
+      },
+      {
+        "id": "plan-construction",
+        "label": "",
+        "x": 152.875,
+        "y": 175.890625,
+        "width": 13,
+        "height": 13,
+        "bottom": 188.890625
+      }
+    ]
+  },
+  {
+    "mode": "2D",
+    "width": 768,
+    "height": 900,
+    "documentWidth": 768,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 768,
+      "height": 249.390625,
+      "bottom": 306.390625
+    },
+    "tabs": {
+      "x": 0,
+      "y": 306.390625,
+      "width": 768,
+      "height": 40,
+      "bottom": 346.390625
+    },
+    "visibleToolbarControls": 21,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Linia",
+        "x": 90,
+        "y": 204.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 220.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Łuk",
+        "x": 168,
+        "y": 204.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 220.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Długość",
+        "x": 482.921875,
+        "y": 204.390625,
+        "width": 74,
+        "height": 16,
+        "bottom": 220.390625
+      },
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 560.921875,
+        "y": 204.390625,
+        "width": 106.359375,
+        "height": 16,
+        "bottom": 220.390625
+      },
+      {
+        "id": "plan-dimensions-visible",
+        "label": "",
+        "x": 24,
+        "y": 255.890625,
+        "width": 13,
+        "height": 13,
+        "bottom": 268.890625
+      },
+      {
+        "id": "plan-construction",
+        "label": "",
+        "x": 152.875,
+        "y": 255.890625,
+        "width": 13,
+        "height": 13,
+        "bottom": 268.890625
+      }
+    ]
+  },
+  {
+    "mode": "3D",
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1440,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 1440,
+      "height": 88,
+      "bottom": 145
+    },
+    "tabs": {
+      "x": 0,
+      "y": 145,
+      "width": 1440,
+      "height": 40,
+      "bottom": 185
+    },
+    "visibleToolbarControls": 14,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 270.265625,
+        "y": 93,
+        "width": 16,
+        "height": 16,
+        "bottom": 109
+      }
+    ]
+  },
+  {
+    "mode": "3D",
+    "width": 1280,
+    "height": 800,
+    "documentWidth": 1280,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 1280,
+      "height": 88,
+      "bottom": 145
+    },
+    "tabs": {
+      "x": 0,
+      "y": 145,
+      "width": 1280,
+      "height": 40,
+      "bottom": 185
+    },
+    "visibleToolbarControls": 14,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 270.265625,
+        "y": 93,
+        "width": 16,
+        "height": 16,
+        "bottom": 109
+      }
+    ]
+  },
+  {
+    "mode": "3D",
+    "width": 1024,
+    "height": 768,
+    "documentWidth": 1024,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 1024,
+      "height": 127,
+      "bottom": 184
+    },
+    "tabs": {
+      "x": 0,
+      "y": 184,
+      "width": 1024,
+      "height": 40,
+      "bottom": 224
+    },
+    "visibleToolbarControls": 14,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 270.265625,
+        "y": 93,
+        "width": 16,
+        "height": 16,
+        "bottom": 109
+      }
+    ]
+  },
+  {
+    "mode": "3D",
+    "width": 768,
+    "height": 900,
+    "documentWidth": 768,
+    "toolbar": {
+      "x": 0,
+      "y": 57,
+      "width": 768,
+      "height": 127,
+      "bottom": 184
+    },
+    "tabs": {
+      "x": 0,
+      "y": 184,
+      "width": 768,
+      "height": 40,
+      "bottom": 224
+    },
+    "visibleToolbarControls": 14,
+    "undersizedControls": [
+      {
+        "id": "",
+        "label": "Warianty: Wiązania / kąty",
+        "x": 270.265625,
+        "y": 93,
+        "width": 16,
+        "height": 16,
+        "bottom": 109
+      }
+    ]
+  }
+]
